@@ -24,6 +24,40 @@
     .hide{display:none;}
     .otp-row{display:flex;gap:10px;}
     .otp-row button{width:auto;font-size:1.02em;padding:13px 22px;margin-top:0;}
+    .certificate-modal{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(48,24,77,0.13);z-index:3200;display:none;align-items:center;justify-content:center;overflow:auto;}
+    .certificate-modal.active{display:flex;overflow:auto;}
+    .certificate-a4{
+      background:#fff;
+      border-radius:24px;
+      position:relative;
+      box-shadow:0 10px 44px #9788c880,0 1px 10px #c0b7eb29;
+      width:970px; max-width:99vw; min-width:305px; min-height:680px; padding:54px 4vw 46px 4vw;
+      outline:7px solid #eae3fc;
+      border:8px double #864ede;
+      display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+      overflow:auto;}
+    .cert-hd{display:flex;align-items:center;margin-bottom:22px;width:93%;}
+    .cert-logo{width:96px;height:96px;border-radius:23px;object-fit:contain;margin-right:32px;border:3.5px solid #ebe6f3;background:#fff;box-sizing:border-box;}
+    .cert-brand .brand-name{font-family:'Playfair Display',serif;font-weight:700;font-size:2.12em;color:#7d2ae2;letter-spacing:.01em;}
+    .cert-brand .brand-tagline{color:#57aadf;font-size:1.14em;font-weight:540;letter-spacing:0.07em;margin-top:3px;}
+    .cert-title{font-family:'Playfair Display',serif;font-weight:800;font-size:2.78em;color:#6828db;margin-bottom:15px;text-align:center;}
+    .cert-quote{font-size:1.20em;color:#9363e1;font-style:italic;margin-bottom:26px;line-height:1.55;text-align:center;}
+    .cert-details{width:84%;background:#f7f1fd;border:2.5px solid #e1d5f9;border-radius:15px;padding:27px 2vw 22px 2vw;margin:32px 0;text-align:center; box-shadow:0 1px 7px #ddcdf425; font-size:1.24em;}
+    .cert-details span{font-weight:600;}
+    .cert-details .block-row{margin:11px 0;}
+    .cert-details .label{color:#6c36d2;font-weight:700;margin-right:12px;}
+    .cert-wellbeing{color:#38c58d;background: linear-gradient(90deg,#38c58d 0%,#66e8f8 100%);padding:11px 24px;font-weight:900;text-align:center;font-size:1.21em;letter-spacing:0.07em;border-radius:33px;box-shadow:0 2px 13px #c0f1e2a2;margin-bottom:20px;}
+    .cert-sign-row{display:flex;align-items:center;justify-content:space-between;margin-top:26px;width:82%;padding:0 2vw;}
+    .cert-sign-block{text-align:center;}
+    .cert-sign-block img{height:53px;background:#fff;object-fit:contain;}
+    .cert-sign-label{font-size:1em;color:#8254d2;margin-top:7px;font-weight:700;}
+    .cert-qr-block{text-align:center;}
+    .cert-qr-block img{height:97px;border-radius:14px;background:#fff;}
+    .download-btn-wrap{display:flex;justify-content:center;gap:22px;margin-top:30px;}
+    .cert-btn.download{padding:14px 46px;font-weight:700;font-size:1.18em;border:none;border-radius:12px;cursor:pointer;background:linear-gradient(90deg,#7b1ee9 0%,#2ee29d 100%);box-shadow:0 2px 38px #ab7ddc32;color:#fff;margin:0 auto;letter-spacing:0.02em;transition:all 0.18s;}
+    .cert-btn.download:hover{background:linear-gradient(90deg,#22e929 0%,#1fd6c2 100%);}
+    .cert-thank-you{font-size:1.11em;color:#9e79d6;margin-top:23px;padding:6px 0;text-align:center;}
+    @media(max-width:1100px){.certificate-a4{width:99vw; min-width:240px; padding:17px 2vw 18px 2vw;}}
   </style>
 </head>
 <body>
@@ -51,11 +85,66 @@
   <button class="next-btn" id="btnStep2">Verify & Next</button>
   <div id="infoStep2" class="info-note"></div>
 </div>
-
+<div id="step3" class="center-section hide">
+  <h2>Watch Video</h2>
+  <div style="border-radius:18px;overflow:hidden;margin-bottom:19px;">
+    <iframe id="ytvideo" width="100%" height="300" src="https://www.youtube.com/embed/5MDGDn0BPjU?enablejsapi=1" frameborder="0" allowfullscreen style="width:100%;max-width:540px;"></iframe>
+  </div>
+</div>
+<div id="step4" class="center-section hide">
+  <h2>Quiz - Mental Wellbeing</h2>
+  <form id="quiz-form"></form>
+  <button class="next-btn" id="btnStep4" type="button">Submit to View Certificate</button>
+</div>
+<div class="certificate-modal" id="certificate-modal">
+  <div class="certificate-a4" id="certificate-block">
+    <div class="cert-hd">
+      <img class="cert-logo" src="logo.png" alt="DOSTT Logo" onerror="this.onerror=null;this.src='https://via.placeholder.com/100x100?text=Logo';"/>
+      <div class="cert-brand">
+        <div class="brand-name">DOSTT</div>
+        <div class="brand-tagline">Connections Begin Here</div>
+      </div>
+    </div>
+    <div class="cert-title">Certificate of Completion</div>
+    <div class="cert-quote">
+      "Building supportive connections for better mental wellbeing."
+    </div>
+    <div class="cert-details">
+      <div class="block-row"><span class="label">Name:</span> <span id="cert-name"></span></div>
+      <div class="block-row"><span class="label">Mobile:</span> <span id="cert-mobile"></span></div>
+      <div class="block-row"><span class="label">Score:</span> <span id="cert-score"></span></div>
+    </div>
+    <div class="cert-wellbeing">Mental Wellbeing: OK</div>
+    <div class="cert-sign-row">
+      <div class="cert-sign-block">
+        <img src="signature.png" alt="Signature" onerror="this.onerror=null;this.src='https://via.placeholder.com/120x60?text=Signature';"/>
+        <div class="cert-sign-label">Paul Elmslie, Founder & CEO</div>
+      </div>
+      <div class="cert-qr-block">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=https://www.healthcert.com/professional-certificate-of-mental-health" alt="QR code"/>
+        <div style="font-size:13px;color:#b5a9ce;margin-top:1px;">Scan to verify</div>
+      </div>
+    </div>
+    <div class="download-btn-wrap" id="cert-btn-row">
+      <button class="cert-btn download" onclick="downloadCertificate()">Download Certificate</button>
+    </div>
+    <div class="cert-thank-you">Thank you for prioritizing your wellbeing with DOSTT.</div>
+  </div>
+</div>
+<script src="https://www.youtube.com/iframe_api"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
 const OTP_API_URL = 'https://script.google.com/macros/s/AKfycbxEYsGuZ-1wRFjyNGWj60SV_-oIcb6nvaUfiCvWnDWNFHtv05otk0AADrAdSdMwQO-i7w/exec';
+let recName="",mobile="",score=0,answers=[],player,videoDone=false;
 
-let recName="",mobile="";
+const quizQ=[
+  {q:"How do you feel today?",opts:["Great","Okay","Tired","Sad"],ans:0},
+  {q:"Do you exercise regularly?",opts:["Daily","Once a week","Sometimes","Never"],ans:0},
+  {q:"Can you manage stress well?",opts:["Yes","Somewhat","Rarely","No"],ans:0},
+  {q:"Do you get enough sleep?",opts:["Always","Sometimes","Rarely"],ans:0},
+  {q:"Do you talk to friends about your problems?",opts:["Yes","No"],ans:0}
+];
 
 function showStep(id) {
   Array.from(document.querySelectorAll('.center-section')).forEach(e=>e.classList.add('hide'));
@@ -107,11 +196,85 @@ document.getElementById("btnStep2").onclick = async function() {
     });
     let data=await resp.json();
     if(!data.success){info.textContent=data.message||'Invalid OTP';info.className='error-note';return;}
-    info.textContent = "OTP verified! (Continue to next step)";
-    info.className = 'info-note';
-    // Next: show video/quiz/certificate
+    info.textContent = "";
+    setTimeout(()=>ytAutoInit(),400);
   }catch(e){ info.textContent="Cannot verify OTP. Check backend."; info.className='error-note'; }
 };
+
+function ytAutoInit(){
+  showStep("step3");
+  window.onYouTubeIframeAPIReady=function(){
+    player = new YT.Player('ytvideo', {
+      events: {
+        'onStateChange': function(ev){
+          if(ev.data==0 && !videoDone){videoDone=true; setTimeout(()=>goQuiz(),1000);}
+        }
+      }
+    });
+  };
+  if(typeof YT==='undefined'||typeof YT.Player==='undefined'){
+    let tag=document.createElement('script');
+    tag.src="https://www.youtube.com/iframe_api";
+    document.body.appendChild(tag);}
+  else { window.onYouTubeIframeAPIReady(); }
+}
+
+function goQuiz() {
+  showStep("step4");
+  let qz=document.getElementById('quiz-form');
+  qz.innerHTML="";
+  quizQ.forEach((q,idx)=>{
+    qz.innerHTML+=`<div style="margin-bottom:19px;">
+      <div style="font-weight:600;color:#5a358f;margin-bottom:3px;">${idx+1}. ${q.q}</div>
+      ${q.opts.map((opt,oidx)=>`<label style="font-weight:400;margin-right:13px;"><input type="radio" name="q${idx}" value="${oidx}"> ${opt}</label>`).join('')}
+    </div>`;
+  });
+}
+
+document.getElementById("btnStep4").onclick = function() {
+  answers=[]; let total=quizQ.length; let form=document.getElementById('quiz-form');
+  for(let i=0;i<total;i++){
+    let ans=form['q'+i], val=ans ? [...ans].find(r=>r.checked) : null;
+    if(!val){alert("Answer all questions!");return;}
+    answers.push(Number(val.value));
+  }
+  let correct=answers.filter((a,i)=>a===quizQ[i].ans).length;
+  score=Math.round((correct/total)*100);
+  showCertificate();
+};
+
+function showCertificate(){
+  document.getElementById('cert-name').innerText=recName;
+  document.getElementById('cert-mobile').innerText=mobile;
+  document.getElementById('cert-score').innerText=score + " / 100";
+  document.getElementById('certificate-modal').classList.add('active');
+  document.body.style.overflow='hidden';
+  document.getElementById('cert-btn-row').style.display='flex';
+}
+
+function downloadCertificate(){
+  document.getElementById('cert-btn-row').style.display='none';
+  setTimeout(()=>{
+    const cert=document.getElementById('certificate-block');
+    html2canvas(cert,{backgroundColor:null,scale:2}).then(canvas=>{
+      const imgData=canvas.toDataURL('image/png');
+      const pdf=new window.jspdf.jsPDF({orientation:"landscape",unit:"pt",format:[970,680]});
+      pdf.addImage(imgData,'PNG',0,0,970,680);
+      pdf.save('Dostt_Certificate.pdf');
+      document.getElementById('cert-btn-row').style.display='flex';
+    });
+  },200);
+}
+
+document.getElementById('certificate-modal').onclick=function(e){
+  if(e.target===this){this.classList.remove("active");document.body.style.overflow='auto';}
+};
+window.addEventListener('keydown',function(e){
+  if(e.key==="Escape"&&document.getElementById('certificate-modal').classList.contains("active")){
+    document.getElementById('certificate-modal').classList.remove("active");
+    document.body.style.overflow='auto';
+  }
+});
 </script>
 </body>
 </html>
