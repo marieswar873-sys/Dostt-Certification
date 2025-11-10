@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DOSTT Certification</title>
+  <meta name="viewport" content="width=1280">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body{margin:0;background:#f5f2fb;font-family:'Inter',Arial,sans-serif;}
+    .header{background:#fff;padding:22px 32px 18px 32px;display:flex;align-items:center;gap:18px;box-shadow:0 2px 18px #c4b3e035;}
+    .header img{height:60px;width:60px;object-fit:contain;border-radius:14px;background:#fff;}
+    .header .title{font-size:2.15em;font-family:'Playfair Display',serif;font-weight:700;color:#783adf;}
+    .header .tagline{font-size:1.10em;color:#46a7ea;font-weight:500;margin-top:6px;}
+    .center-section{max-width:440px;margin:63px auto 0 auto;background:#fff;border-radius:22px;padding:44px 34px 40px 34px;box-shadow:0 14px 48px #bcb2de26;}
+    label{font-weight:600;color:#7c53b5;font-size:1.11em;display:block;margin-bottom:9px;}
+    input[type="text"],input[type="number"]{width:100%;padding:18px 17px;font-size:1.18em;border:2px solid #cfc9e9;border-radius:13px;background:#f8f7fd;color:#322665;margin-bottom:23px;box-sizing: border-box;}
+    input[type="text"]:focus,input[type="number"]:focus{outline:2px solid #9246ec;border-color:#9246ec;}
+    button.next-btn{width:100%;background:linear-gradient(94deg,#832ee6 0%,#24e09d 100%);color:#fff;font-size:1.22em;font-weight:700;padding:17px 0;border:none;border-radius:13px;cursor:pointer;box-shadow:0 2px 15px #af78ec1f;margin-top:15px;}
+    button.next-btn:active{opacity:.89;}
+    .info-note,.error-note{padding:12px 19px;border-radius:11px;margin-bottom:16px;font-size:1.05em;}
+    .info-note{background:#f3edff;color:#8651be;}
+    .error-note{background:#ffeaea;color:#dd4555;border:1.4px solid #ffc0c0;}
+    h2{font-size:1.55em;font-weight:700;text-align:center;margin:0 0 23px 0;}
+    .hide{display:none;}
+    .otp-row{display:flex;gap:10px;}
+    .otp-row button{width:auto;font-size:1.02em;padding:13px 22px;margin-top:0;}
+    /* Certificate Modal & Design */
+    .certificate-modal{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(48,24,77,0.13);z-index:3200;display:none;align-items:center;justify-content:center;overflow:auto;}
+    .certificate-modal.active{display:flex;overflow:auto;}
+    .certificate-a4{
+      background: #fff;
+      border-radius:24px;
+      position:relative;
+      box-shadow:0 10px 44px #9788c880,0 1px 10px #c0b7eb29;
+      width:970px; max-width:99vw; min-width:305px; min-height:680px; padding:54px 4vw 46px 4vw;
+      outline:7px solid #eae3fc;
+      border:8px double #864ede;
+      display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+      overflow:auto;
+    }
+    .cert-hd{display:flex;align-items:center;margin-bottom:22px;width:93%;}
+    .cert-logo{width:96px;height:96px;border-radius:23px;object-fit:contain;margin-right:32px;border:3.5px solid #ebe6f3;background:#fff;box-sizing:border-box;}
+    .cert-brand .brand-name{font-family:'Playfair Display',serif;font-weight:700;font-size:2.12em;color:#7d2ae2;letter-spacing:.01em;}
+    .cert-brand .brand-tagline{color:#57aadf;font-size:1.14em;font-weight:540;letter-spacing:0.07em;margin-top:3px;}
+    .cert-title{font-family:'Playfair Display',serif;font-weight:800;font-size:2.78em;color:#6828db;margin-bottom:15px;text-align:center;}
+    .cert-quote{font-size:1.20em;color:#9363e1;font-style:italic;margin-bottom:26px;line-height:1.55;text-align:center;}
+    .cert-details{width:84%;background:#f7f1fd;border:2.5px solid #e1d5f9;border-radius:15px;padding:27px 2vw 22px 2vw;margin:32px 0;text-align:center; box-shadow:0 1px 7px #ddcdf425; font-size:1.24em;}
+    .cert-details span{font-weight:600;}
+    .cert-details .block-row{margin:11px 0;}
+    .cert-details .label{color:#6c36d2;font-weight:700;margin-right:12px;}
+    .cert-wellbeing{color:#38c58d;background: linear-gradient(90deg,#38c58d 0%,#66e8f8 100%);padding:11px 24px;font-weight:900;text-align:center;font-size:1.21em;letter-spacing:0.07em;border-radius:33px;box-shadow:0 2px 13px #c0f1e2a2;margin-bottom:20px;}
+    .cert-sign-row{display:flex;align-items:center;justify-content:space-between;margin-top:26px;width:82%;padding:0 2vw;}
+    .cert-sign-block{text-align:center;}
+    .cert-sign-block img{height:53px;background:#fff;object-fit:contain;}
+    .cert-sign-label{font-size:1em;color:#8254d2;margin-top:7px;font-weight:700;}
+    .cert-qr-block{text-align:center;}
+    .cert-qr-block img{height:97px;border-radius:14px;background:#fff;}
+    .download-btn-wrap{display:flex;justify-content:center;gap:22px;margin-top:30px;}
+    .cert-btn.download{padding:14px 46px;font-weight:700;font-size:1.18em;border:none;border-radius:12px;cursor:pointer;background:linear-gradient(90deg,#7b1ee9 0%,#2ee29d 100%);box-shadow:0 2px 38px #ab7ddc32;color:#fff;margin:0 auto;letter-spacing:0.02em;transition:all 0.18s;}
+    .cert-btn.download:hover{background:linear-gradient(90deg,#22e929 0%,#1fd6c2 100%);}
+    .cert-btn.wa{background:linear-gradient(94deg,#34d851 0%, #23e7b8 100%);color:#147842;}
+    .cert-btn.wa:hover{background:linear-gradient(84deg,#23e7b8 0%, #34d851 100%);}
+    .cert-thank-you{font-size:1.11em;color:#9e79d6;margin-top:23px;padding:6px 0;text-align:center;}
+    @media(max-width:1100px){.certificate-a4{width:99vw; min-width:240px; padding:17px 2vw 18px 2vw;}}
+  </style>
+</head>
+<body>
+<div class="header">
+  <img src="logo.png" alt="DOSTT Logo" onerror="this.onerror=null;this.src='https://via.placeholder.com/100x100?text=Logo';"/>
+  <div>
+    <div class="title">DOSTT Certification</div>
+    <div class="tagline">Connections Begin Here</div>
+  </div>
+</div>
+<div id="step1" class="center-section">
+  <label for="name">Name</label>
+  <input type="text" id="name" maxlength="40" placeholder="Full Name"/>
+  <label for="mobile">Mobile Number (10 digits)</label>
+  <input type="text" id="mobile" maxlength="10" placeholder="Enter 10 digit mobile"/>
+  <button class="next-btn" id="btnStep1">Send OTP</button>
+  <div id="infoStep1"></div>
+</div>
+<div id="step2" class="center-section hide">
+  <label for="otp">Enter OTP</label>
+  <div class="otp-row">
+    <input type="text" id="otp" maxlength="6" placeholder="OTP (Check WhatsApp/SMS)" style="flex:2"/>
+    <button id="btnResendOTP" type="button" style="background:#b893f9;">Resend OTP</button>
+  </div>
+  <button class="next-btn" id="btnStep2">Verify & Next</button>
+  <div id="infoStep2" class="info-note"></div>
+</div>
+<div id="step3" class="center-section hide">
+  <h2>Watch Video</h2>
+  <div style="border-radius:18px;overflow:hidden;margin-bottom:19px;">
+    <iframe id="ytvideo" width="100%" height="300" src="https://www.youtube.com/embed/5MDGDn0BPjU?enablejsapi=1" frameborder="0" allowfullscreen style="width:100%;max-width:540px;"></iframe>
+  </div>
+</div>
+<div id="step4" class="center-section hide">
+  <h2>Quiz - Mental Wellbeing</h2>
+  <form id="quiz-form"></form>
+  <button class="next-btn" id="btnStep4" type="button">Submit to View Certificate</button>
+</div>
+<div class="certificate-modal" id="certificate-modal">
+  <div class="certificate-a4" id="certificate-block">
+    <div class="cert-hd">
+      <img class="cert-logo" src="logo.png" alt="DOSTT Logo" onerror="this.onerror=null;this.src='https://via.placeholder.com/100x100?text=Logo';"/>
+      <div class="cert-brand">
+        <div class="brand-name">DOSTT</div>
+        <div class="brand-tagline">Connections Begin Here</div>
+      </div>
+    </div>
+    <div class="cert-title">Certificate of Completion</div>
+    <div class="cert-quote">
+      "Building supportive connections for better mental wellbeing."
+    </div>
+    <div class="cert-details">
+      <div class="block-row"><span class="label">Name:</span> <span id="cert-name"></span></div>
+      <div class="block-row"><span class="label">Mobile:</span> <span id="cert-mobile"></span></div>
+      <div class="block-row"><span class="label">Score:</span> <span id="cert-score"></span></div>
+    </div>
+    <div class="cert-wellbeing">Mental Wellbeing: OK</div>
+    <div class="cert-sign-row">
+      <div class="cert-sign-block">
+        <img src="signature.png" alt="Signature" onerror="this.onerror=null;this.src='https://via.placeholder.com/120x60?text=Signature';"/>
+        <div class="cert-sign-label">Paul Elmslie, Founder & CEO</div>
+      </div>
+      <div class="cert-qr-block">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=https://www.healthcert.com/professional-certificate-of-mental-health" alt="QR code"/>
+        <div style="font-size:13px;color:#b5a9ce;margin-top:1px;">Scan to verify</div>
+      </div>
+    </div>
+    <div class="download-btn-wrap" id="cert-btn-row">
+      <button class="cert-btn download" onclick="downloadCertificate()">Download Certificate</button>
+      <button class="cert-btn wa" onclick="waShare()" id="wa-btn" type="button">Share via WhatsApp</button>
+    </div>
+    <div class="cert-thank-you">Thank you for prioritizing your wellbeing with DOSTT.</div>
+  </div>
+</div>
+<script src="https://www.youtube.com/iframe_api"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+let recName="",mobile="",score=0,answers=[],player,videoDone=false;
+const quizQ=[
+  {q:"How do you feel today?",opts:["Great","Okay","Tired","Sad"],ans:0},
+  {q:"Do you exercise regularly?",opts:["Daily","Once a week","Sometimes","Never"],ans:0},
+  {q:"Can you manage stress well?",opts:["Yes","Somewhat","Rarely","No"],ans:0},
+  {q:"Do you get enough sleep?",opts:["Always","Sometimes","Rarely"],ans:0},
+  {q:"Do you talk to friends about your problems?",opts:["Yes","No"],ans:0}
+];
+function showStep(id) {
+  Array.from(document.querySelectorAll('.center-section')).forEach(e=>e.classList.add('hide'));
+  document.getElementById(id).classList.remove('hide');
+}
+document.getElementById("btnStep1").onclick = async function() {
+  recName=document.getElementById('name').value.trim();
+  mobile=document.getElementById('mobile').value.trim();
+  let info = document.getElementById('infoStep1');
+  info.className = 'info-note'; info.textContent = '';
+  if (!recName) { info.textContent="Enter your name."; info.className='error-note'; return; }
+  if(!/^\d{10}$/.test(mobile)){ info.textContent="Enter 10 digit mobile."; info.className='error-note'; return;}
+  try{
+    let resp=await fetch("http://localhost:3000/send-otp",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({phoneNumber:mobile})
+    });
+    let data=await resp.json();
+    if(!data.success){ info.textContent=data.message||"OTP error"; info.className='error-note'; return;}
+    info.textContent="OTP sent successfully. Enter it below."; info.className='info-note';
+    setTimeout(()=>showStep("step2"),850);
+  }catch(e){ info.textContent="Cannot send OTP. Check backend."; info.className='error-note'; }
+};
+document.getElementById("btnResendOTP").onclick = async function() {
+  let info = document.getElementById('infoStep2');
+  if(!/^\d{10}$/.test(mobile)){ info.textContent="Enter mobile above first."; info.className='error-note'; return;}
+  try{
+    let resp=await fetch("http://localhost:3000/send-otp",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({phoneNumber:mobile})
+    });
+    let data=await resp.json();
+    if(!data.success){ info.textContent=data.message||"OTP resend error"; info.className='error-note'; return;}
+    info.textContent="OTP resent successfully."; info.className='info-note';
+  }catch(e){ info.textContent="Cannot resend OTP. Check backend."; info.className='error-note'; }
+};
+document.getElementById("btnStep2").onclick = async function() {
+  let otpval=document.getElementById('otp').value.trim();
+  let info=document.getElementById('infoStep2');
+  if(!mobile || !/^\d{10}$/.test(mobile)){ info.textContent="Mobile missing. Go back and enter."; info.className='error-note'; return;}
+  if(otpval.length<4){ info.textContent="Enter OTP sent to WhatsApp/SMS."; info.className='error-note'; return;}
+  try{
+    let resp=await fetch("http://localhost:3000/verify-otp",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({phoneNumber:mobile,otp:otpval})
+    });
+    let data=await resp.json();
+    if(!data.success){info.textContent=data.message||'Invalid OTP';info.className='error-note';return;}
+    setTimeout(()=>ytAutoInit(),400);
+  }catch(e){ info.textContent="Cannot verify OTP. Check backend."; info.className='error-note'; }
+};
+function ytAutoInit(){
+  showStep("step3");
+  window.onYouTubeIframeAPIReady=function(){
+    player = new YT.Player('ytvideo', {
+      events: {
+        'onStateChange': function(ev){
+          if(ev.data==0 && !videoDone){videoDone=true; setTimeout(()=>goQuiz(),1000);}
+        }
+      }
+    });
+  };
+  if(typeof YT==='undefined'||typeof YT.Player==='undefined'){
+    let tag=document.createElement('script');
+    tag.src="https://www.youtube.com/iframe_api";
+    document.body.appendChild(tag);}
+  else { window.onYouTubeIframeAPIReady(); }
+}
+function goQuiz() {
+  showStep("step4");
+  let qz=document.getElementById('quiz-form');
+  qz.innerHTML="";
+  quizQ.forEach((q,idx)=>{
+    qz.innerHTML+=`<div style="margin-bottom:19px;">
+      <div style="font-weight:600;color:#5a358f;margin-bottom:3px;">${idx+1}. ${q.q}</div>
+      ${q.opts.map((opt,oidx)=>`<label style="font-weight:400;margin-right:13px;"><input type="radio" name="q${idx}" value="${oidx}"> ${opt}</label>`).join('')}
+    </div>`;
+  });
+}
+document.getElementById("btnStep4").onclick = function() {
+  answers=[]; let total=quizQ.length; let form=document.getElementById('quiz-form');
+  for(let i=0;i<total;i++){
+    let ans=form['q'+i], val=ans ? [...ans].find(r=>r.checked) : null;
+    if(!val){alert("Answer all questions!");return;}
+    answers.push(Number(val.value));
+  }
+  let correct=answers.filter((a,i)=>a===quizQ[i].ans).length;
+  score=Math.round((correct/total)*100);
+  showCertificate();
+  storeToSheet();
+};
+function showCertificate(){
+  document.getElementById('cert-name').innerText=recName;
+  document.getElementById('cert-mobile').innerText=mobile;
+  document.getElementById('cert-score').innerText=score + " / 100";
+  document.getElementById('certificate-modal').classList.add('active');
+  document.body.style.overflow='hidden';
+  document.getElementById('cert-btn-row').style.display='flex';
+}
+function downloadCertificate(){
+  document.getElementById('cert-btn-row').style.display='none';
+  setTimeout(()=>{
+    const cert=document.getElementById('certificate-block');
+    html2canvas(cert,{backgroundColor:null,scale:2}).then(canvas=>{
+      const imgData=canvas.toDataURL('image/png');
+      const pdf=new window.jspdf.jsPDF({orientation:"landscape",unit:"pt",format:[970,680]});
+      pdf.addImage(imgData,'PNG',0,0,970,680);
+      pdf.save('Dostt_Certificate.pdf');
+      document.getElementById('cert-btn-row').style.display='flex';
+    });
+  },200);
+}
+function waShare() {
+  let msg =
+    `I've received my DOSTT Certificate!\n\nName: ${recName}\nMobile: ${mobile}\nScore: ${score} / 100\nMental Wellbeing: OK\n\nThanks to DOSTT - Connections Begin Here.\nhttps://www.healthcert.com/professional-certificate-of-mental-health`;
+  let url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+  window.open(url,"_blank");
+}
+document.getElementById('certificate-modal').onclick=function(e){
+  if(e.target===this){this.classList.remove("active");document.body.style.overflow='auto';}
+};
+window.addEventListener('keydown',function(e){
+  if(e.key==="Escape"&&document.getElementById('certificate-modal').classList.contains("active")){
+    document.getElementById('certificate-modal').classList.remove("active");
+    document.body.style.overflow='auto';
+  }
+});
+
+// Add Timestamped Sheet Storage
+<!-- Put this inside <script>... wherever after quiz is submitted: -->
+function storeToSheet() {
+  const dt = new Date();
+  const ist = new Date(dt.getTime() + (5.5*60*60*1000));
+  const format = n => n.toString().padStart(2,'0');
+  const timestamp =
+    ist.getFullYear() + "-" +
+    format(ist.getMonth()+1) + "-" +
+    format(ist.getDate()) + " " +
+    format(ist.getHours()) + ":" +
+    format(ist.getMinutes()) + ":" +
+    format(ist.getSeconds());
+
+  const params = new URLSearchParams({
+    timestamp: timestamp,
+    name: recName,
+    mobile: mobile,
+    score: score,
+    cert_link: "Dostt_Certificate.pdf"
+  }).toString();
+
+  fetch('https://script.google.com/macros/s/AKfycbzkx_6Xf5BIprG2altq5gMh_LG75Mpn8uGjqp9pMiAYOcGhYJWueiSnhwv5UPi5DZx9/exec' + '?' + params)
+}
+</script>
+</body>
+</html>
