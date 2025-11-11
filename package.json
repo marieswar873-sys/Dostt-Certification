@@ -1,17 +1,18 @@
 {
-  "name": "dostt-certification-backend",
+  "name": "dostt-backend",
   "version": "1.0.0",
-  "description": "Backend for DOSTT Certification OTP",
+  "description": "",
   "main": "server.js",
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2",
     "cors": "^2.8.5",
-    "node-fetch": "^3.3.0"
-  },
-  "engines": {
-    "node": ">=14.0.0"
+    "express": "^5.1.0",
+    "node-fetch": "^3.3.2"
   }
 }

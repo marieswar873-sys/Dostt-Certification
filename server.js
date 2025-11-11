@@ -6,7 +6,9 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// Example: https://live-server-328913.wati.io/api/v1/sendTemplateMessage?whatsappNumber=919500365660
 const WATI_BASE = 'https://live-server-328913.wati.io/api/v1/sendTemplateMessage';
+// Use a new, fresh Bearer Token from API Docs!
 const WATI_TOKEN = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5ZDJkMGQyMC02NTFjLTQzMDMtODdlYi05MTFjNzBjNDYyM2EiLCJ1bmlxdWVfbmFtZSI6Im1hcmllc3dhckBnZXRsb2thbGFwcC5jb20iLCJuYW1laWQiOiJtYXJpZXN3YXJAZ2V0bG9rYWxhcHAuY29tIiwiZW1haWwiOiJtYXJpZXN3YXJAZ2V0bG9rYWxhcHAuY29tIiwiYXV0aF90aW1lIjoiMTEvMDkvMjAyNSAxMzoyNzoxOCIsInRlbmFudF9pZCI6IjMyODkxMyIsImRiX25hbWUiOiJtdC1wcm9kLVRlbmFudHMiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBRE1JTklTVFJBVE9SIiwiZXhwIjoyNTM0MDIzMDA4MDAsImlzcyI6IkNsYXJlX0FJIiwiYXVkIjoiQ2xhcmVfQUkifQ.oqImoZ3eVsAU78DZOOlcXOVubiuXAXS9pwKZkmjVhYY';
 
 const otpStore = {};
@@ -15,6 +17,7 @@ function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
+// Normalize as "91XXXXXXXXXX" (phone must be 10 digits from users)
 function normalizeIndianPhone(number) {
   let s = String(number).replace(/\D/g, "");
   if (s.length === 10) return "91" + s;
@@ -30,6 +33,7 @@ app.post('/send-otp', async (req, res) => {
     return res.status(400).json({ success: false, message: 'Invalid mobile number. Enter 10 digits.' });
   }
   const otp = generateOTP();
+  // The payload does NOT include whatsappNumber for this version
   const payload = {
     template_name: 'dostt_certification_otp',
     broadcast_name: 'DOSTT OTP',
@@ -57,14 +61,14 @@ app.post('/send-otp', async (req, res) => {
       otpStore[phoneNumber] = { otp, expires: Date.now() + 5 * 60 * 1000 };
       res.json({ success: true, message: 'OTP sent successfully' });
     } else if (status === 401) {
-      res.status(401).json({ success: false, message: 'Unauthorized - Check Bearer Token' });
+      res.status(401).json({ success: false, message: 'Unauthorized - Check Bearer Token (expired or for wrong tenant)' });
     } else if (status === 405) {
-      res.status(405).json({ success: false, message: 'Check endpoint and HTTP method.' });
+      res.status(405).json({ success: false, message: 'Check endpoint and HTTP method. Must POST to endpoint EXACTLY as per API Docs.' });
     } else {
       res.status(500).json({ success: false, message: 'Failed to send OTP', error: data });
     }
   } catch (error) {
-    console.log('Error:', error.message);
+    console.log('❌ Network or server error:', error.message);
     res.status(500).json({ success: false, message: error.message });
   }
 });
@@ -87,7 +91,6 @@ app.post('/verify-otp', (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Backend running on port ${PORT}`);
+app.listen(3000, () => {
+  console.log('Backend running at http://localhost:3000');
 });
